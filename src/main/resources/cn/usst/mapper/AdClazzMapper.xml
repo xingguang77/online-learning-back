@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.usst.mapper.AdClazzMapper">
+
+    <resultMap id="ClazzVOMap" type="cn.usst.pojo.dto.ClazzVODTO">
+        <result column="course_name" property="courseName"/>
+        <result column="teacher_name" property="teacherName"/>
+    </resultMap>
+
+    <select id="selectList" resultMap="ClazzVOMap">
+        SELECT
+        c.*,
+        co.name AS course_name,
+        u.name AS teacher_name
+        FROM class c
+        LEFT JOIN course co ON c.course_id = co.id
+        LEFT JOIN teacher t ON c.teacher_id = t.id
+        LEFT JOIN user u ON t.user_id = u.id
+        <where>
+            <if test="courseName != null and courseName != ''">
+                AND co.name LIKE concat('%', #{courseName}, '%')
+            </if>
+            <if test="teacherName != null and teacherName != ''">
+                AND u.name LIKE concat('%', #{teacherName}, '%')
+            </if>
+        </where>
+        ORDER BY c.create_time DESC
+    </select>
+
+    <select id="countByCourseAndTeacher" resultType="int">
+        SELECT COUNT(*) FROM class
+        WHERE course_id = #{courseId}
+        AND teacher_id = #{teacherId}
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO class(course_id, class_name, teacher_id, status, create_time)
+        VALUES (#{courseId}, #{className}, #{teacherId}, 1, NOW())
+    </insert>
+
+    <update id="update">
+        UPDATE class
+        SET class_name = #{className},
+            teacher_id = #{teacherId},
+            course_id = #{courseId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM class WHERE id = #{id}
+    </delete>
+
+</mapper>

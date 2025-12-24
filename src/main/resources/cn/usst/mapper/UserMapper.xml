@@ -1,0 +1,74 @@
+<!--定义Mapper映射文件的约束和基本结构-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.usst.mapper.UserMapper">
+
+    <!-- 根据用户名查询 -->
+    <select id="findByUsername" resultType="cn.usst.pojo.User">
+        SELECT
+            id,
+            username,
+            password,
+            name,
+            user_type AS userType,
+            image,
+            email,
+            create_time AS createTime,
+            update_time AS updateTime
+        FROM user
+        WHERE username = #{username}
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultType="cn.usst.pojo.User">
+        SELECT
+            id,
+            username,
+            password,
+            name,
+            user_type AS userType,
+            image,
+            email,
+            create_time AS createTime,
+            update_time AS updateTime
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <!-- 修改个人资料 -->
+    <update id="updateProfile">
+        UPDATE user
+        SET
+            name = #{name},
+            image = #{image},
+            email = #{email},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 修改密码 -->
+    <update id="updatePassword">
+        UPDATE user
+        SET
+            password = #{password},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user(username, password, name, user_type, create_time, update_time)
+        VALUES (#{username}, #{password}, #{name}, #{userType}, NOW(), NOW())
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+    <update id="updateName">
+        UPDATE user
+        SET name = #{name}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,6 +1,4 @@
 package cn.usst.pojo.dto;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +6,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginDTO {
-    private String username;
-    private String password;
+public class CourseDTO {
+    private Long id;
+    private String name;
+    private String description;
+    private String college;
 }
-
