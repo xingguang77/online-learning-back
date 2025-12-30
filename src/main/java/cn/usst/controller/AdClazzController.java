@@ -5,7 +5,7 @@ import cn.usst.pojo.PageResult;
 import cn.usst.pojo.Result;
 import cn.usst.pojo.dto.ClazzDTO;
 import cn.usst.pojo.dto.ClazzQueryDTO;
-import cn.usst.pojo.dto.ClazzVODTO;
+import cn.usst.pojo.dto.ClazzVO;
 import cn.usst.service.AdClazzService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class AdClazzController {
     @GetMapping("/list")
     public Result list(ClazzQueryDTO queryDTO) {
         log.info("查询班级列表: {}", queryDTO);
-        PageResult<ClazzVODTO> pageResult = adClazzService.page(queryDTO);
+        PageResult<ClazzVO> pageResult = adClazzService.page(queryDTO);
         return Result.success(pageResult);
     }
 

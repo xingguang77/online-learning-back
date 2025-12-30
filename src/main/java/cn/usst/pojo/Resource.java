@@ -32,7 +32,7 @@ public class Resource {
     private String uploaderRole;
 
     /** all / class_only */
-    private String visibility;
+    private Integer visibility;
 
     /** 下载次数 */
     private Integer downloadCount;

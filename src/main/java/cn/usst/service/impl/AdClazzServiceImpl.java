@@ -5,7 +5,7 @@ import cn.usst.pojo.Clazz;
 import cn.usst.pojo.PageResult;
 import cn.usst.pojo.dto.ClazzDTO;
 import cn.usst.pojo.dto.ClazzQueryDTO;
-import cn.usst.pojo.dto.ClazzVODTO;
+import cn.usst.pojo.dto.ClazzVO;
 import cn.usst.service.AdClazzService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -22,10 +22,10 @@ public class AdClazzServiceImpl implements AdClazzService {
     private AdClazzMapper adClazzMapper;
 
     @Override
-    public PageResult<ClazzVODTO> page(ClazzQueryDTO queryDTO) {
+    public PageResult<ClazzVO> page(ClazzQueryDTO queryDTO) {
         PageHelper.startPage(queryDTO.getPage(), queryDTO.getPageSize());
-        List<ClazzVODTO> list = adClazzMapper.selectList(queryDTO);
-        Page<ClazzVODTO> p = (Page<ClazzVODTO>) list;
+        List<ClazzVO> list = adClazzMapper.selectList(queryDTO);
+        Page<ClazzVO> p = (Page<ClazzVO>) list;
         return new PageResult<>(p.getTotal(), p.getResult());
     }
 

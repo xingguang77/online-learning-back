@@ -29,7 +29,7 @@ public class Question {
     private Long studentId;
 
     /** unanswered / answered */
-    private String status;
+    private Integer status;
 
     private LocalDateTime createTime;
 }
