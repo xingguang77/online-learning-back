@@ -1,15 +1,18 @@
 package cn.usst.service.impl;
 
+import cn.usst.mapper.QAMapper;
 import cn.usst.mapper.TeacherCoreMapper;
 import cn.usst.pojo.Answer;
 import cn.usst.pojo.Question;
 import cn.usst.pojo.Resource;
 import cn.usst.pojo.dto.*;
+import cn.usst.service.NotificationService;
 import cn.usst.service.TeacherCoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +24,13 @@ public class TeacherCoreServiceImpl implements TeacherCoreService {
     @Autowired
     private TeacherCoreMapper teacherCoreMapper;
 
+    // 1. 注入通知服务
+    @Autowired
+    private NotificationService notificationService;
+
+    // 2. 注入 QA Mapper 用于查询提问者ID
+    @Autowired
+    private QAMapper qaMapper;
     // TODO: 注入 NotificationService (成员E负责)
     // @Autowired
     // private NotificationService notificationService;
@@ -74,33 +84,41 @@ public class TeacherCoreServiceImpl implements TeacherCoreService {
         }
     }
 
-    @Override
-    @Transactional
-    public void replyQuestion(AnswerPostDTO dto, Long userId) {
-        Long teacherId = teacherCoreMapper.getTeacherIdByUserId(userId);
-        if (teacherId == null) throw new RuntimeException("无权操作");
 
-        // 1. 保存回答
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void replyQuestion(AnswerPostDTO dto, Long teacherId) {
+        // --- 原有的保存回答逻辑 ---
         Answer answer = new Answer();
         answer.setQuestionId(dto.getQuestionId());
-        answer.setTeacherId(teacherId);
         answer.setContent(dto.getContent());
+        answer.setTeacherId(teacherId);
+        answer.setIsDeleted(0);
+        answer.setCreateTime(LocalDateTime.now());
+
         teacherCoreMapper.insertAnswer(answer);
 
-        // 2. 保存回答附件
+        // 处理附件
         if (dto.getFileUrls() != null && !dto.getFileUrls().isEmpty()) {
             teacherCoreMapper.insertAnswerFiles(answer.getId(), dto.getFileUrls());
         }
 
-        // 3. 更新问题状态为 answered
+        // 更新问题状态为已解决
         teacherCoreMapper.updateQuestionStatus(dto.getQuestionId(), 1);
 
-        // 4. 发送通知 (协作部分)
-        Question question = teacherCoreMapper.selectQuestionById(dto.getQuestionId());
-        if(question != null) {
-            // Member E 的代码逻辑，这里暂留 TODO
-            // notificationService.send(question.getStudentId(), "answer", question.getId());
-            System.out.println("TODO: 发送通知给学生 ID: " + question.getStudentId());
+        // --- 【新增】核心逻辑：发送通知 ---
+        // 1. 查出这个问题是谁提的 (复用之前的 selectQuestionDetailById 或类似方法)
+        QuestionDetailDTO question = qaMapper.selectQuestionBaseInfo(dto.getQuestionId());
+
+        if (question != null) {
+            // 2. 构造通知内容
+            String msg = "您的问题 [" + question.getTitle() + "] 收到了新的回答，快去看看吧！";
+
+            // 3. 调用 sendNotification，将消息写入数据库
+            // question.getStudentId() 是接收者，msg 是内容
+            notificationService.sendNotification(question.getStudentId(), msg,question.getId());
         }
     }
 

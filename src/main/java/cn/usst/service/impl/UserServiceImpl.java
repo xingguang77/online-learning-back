@@ -6,12 +6,15 @@ import cn.usst.pojo.LoginInfo;
 import cn.usst.pojo.User;
 import cn.usst.pojo.dto.LoginDTO;
 import cn.usst.pojo.dto.PasswordDTO;
+import cn.usst.pojo.dto.RegisterDTO;
 import cn.usst.pojo.dto.UserUpdateDTO;
 import cn.usst.service.UserService;
 import cn.usst.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.BeanUtils;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +25,25 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    // 注入时确保有 BeanUtils
+    @Override
+    public void register(RegisterDTO dto) {
+        // 1. 校验用户名是否已存在
+        User existUser = userMapper.findByUsername(dto.getUsername());
+        if (existUser != null) {
+            throw new RuntimeException("用户名已存在，请更换");
+        }
+
+        // 2. 封装用户对象
+        User user = new User();
+        BeanUtils.copyProperties(dto, user);
+        user.setUserType(3); // 核心：强制设置类型为 3 (学生)
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+
+        // 3. 插入数据库
+        userMapper.insert(user);
+    }
     @Override
     public LoginInfo login(LoginDTO dto) {
         User user = userMapper.findByUsername(dto.getUsername());

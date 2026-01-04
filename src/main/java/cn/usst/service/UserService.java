@@ -5,6 +5,7 @@ import cn.usst.pojo.Result;
 import cn.usst.pojo.User;
 import cn.usst.pojo.dto.LoginDTO;
 import cn.usst.pojo.dto.PasswordDTO;
+import cn.usst.pojo.dto.RegisterDTO;
 import cn.usst.pojo.dto.UserUpdateDTO;
 
 public interface UserService {
@@ -21,6 +22,7 @@ public interface UserService {
     //修改密码
     void changePassword(PasswordDTO dto);
 
-
+    // 学生注册
+    void register(RegisterDTO dto);
 }
 

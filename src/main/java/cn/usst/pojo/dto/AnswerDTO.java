@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AnswerDTO extends Answer {
+    private String teacherName;
     // 专门存放回答的附件
     private List<String> fileUrls;
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 @Data
 public class ResourcePostDTO {
+    private Long id;
     private String title;
     private String description;
     private Long courseId;

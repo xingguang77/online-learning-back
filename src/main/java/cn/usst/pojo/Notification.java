@@ -10,21 +10,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notification {
-
     private Long id;
-
-    /** 接收用户 user.id */
     private Long userId;
-
-    /** answer */
-    private String type;
-
-    private Long questionId;
-
-    private Long answerId;
-
-    /** 0未读 1已读 */
+    private String content;
+    private Integer type;
     private Integer isRead;
-
     private LocalDateTime createTime;
+
+    // 【新增】关联ID
+    private Long relatedId;
 }

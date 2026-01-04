@@ -15,6 +15,7 @@ public class QuestionDTO extends Question {
     private Long answerId;          // 回答ID (用于修改/删除)
     private String answerContent;   // 回答内容 (用于回显)
     private String studentName;     // 提问学生姓名 (用于列表展示)
+    private String courseName;
     // 新增：专门存放【老师回答】的附件
     private List<String> answerFileUrls;
 }
