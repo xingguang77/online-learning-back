@@ -54,6 +54,9 @@
             q.content LIKE concat('%', #{dto.keyword}, '%')
             )
         </if>
+        <if test="dto.status != null">
+            AND q.status = #{dto.status}
+        </if>
 
         ORDER BY q.create_time DESC
     </select>

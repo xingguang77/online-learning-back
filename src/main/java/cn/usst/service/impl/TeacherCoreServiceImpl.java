@@ -89,7 +89,11 @@ public class TeacherCoreServiceImpl implements TeacherCoreService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void replyQuestion(AnswerPostDTO dto, Long teacherId) {
+    public void replyQuestion(AnswerPostDTO dto, Long userId) {
+        Long teacherId = teacherCoreMapper.getTeacherIdByUserId(userId);
+        if (teacherId == null) {
+            throw new RuntimeException("当前用户不是教师");
+        }
         // --- 原有的保存回答逻辑 ---
         Answer answer = new Answer();
         answer.setQuestionId(dto.getQuestionId());
